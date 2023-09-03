@@ -6,6 +6,6 @@ import lombok.Getter;
 import static com.codeborne.selenide.Selenide.$x;
 
 @Getter
-public class BasketPage {
-    SelenideElement submitButton = $x("//button[@title='Proceed to Checkout']");
+public class SuccessPage {
+    SelenideElement message = $x("//span[@data-ui-id='page-title-wrapper']");
 }

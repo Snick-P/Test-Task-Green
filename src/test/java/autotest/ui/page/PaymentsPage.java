@@ -6,6 +6,7 @@ import lombok.Getter;
 import static com.codeborne.selenide.Selenide.$x;
 
 @Getter
-public class BasketPage {
-    SelenideElement submitButton = $x("//button[@title='Proceed to Checkout']");
+public class PaymentsPage {
+
+    SelenideElement placeOrderButton = $x("//button[@class='action primary checkout']");
 }

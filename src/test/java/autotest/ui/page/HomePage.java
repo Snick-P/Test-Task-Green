@@ -1,2 +1,5 @@
-package autotest.ui.page;public class HomePage {
+package autotest.ui.page;
+
+public class HomePage {
+
 }

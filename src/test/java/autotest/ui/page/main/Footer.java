@@ -1,2 +1,5 @@
-package autotest.ui.page.main;public class Footer {
+package autotest.ui.page.main;
+
+public class Footer {
+
 }
