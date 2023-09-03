@@ -1,8 +1,10 @@
 package autotest.ui.page;
 
+import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import lombok.Getter;
 
+import static com.codeborne.selenide.Selenide.$$x;
 import static com.codeborne.selenide.Selenide.$x;
 
 @Getter
@@ -16,12 +18,11 @@ public class ShippingPage {
             cityInput = $x("//input[@name='city']"),
             zipCodeInput = $x("//input[@name='postcode']"),
 
-
-    //   Определиться с селектором страны, как выбирать
     countrySelect = $x("//select[@name='country_id']"),
             phoneInput = $x("//input[@name='telephone']"),
 
             submitButton = $x("//div[@id='shipping-method-buttons-container']//button");
 
+    ElementsCollection  shippingMethod = $$x("//input[@type='radio']");
 
 }

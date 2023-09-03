@@ -7,9 +7,9 @@ public class CategorySteps {
 
 //    Ввиду неудобства исп. явных названий товаров, выбираю товар по номеру в списке
 
-    public String selectItems(int itemsNom) {
-        String itemsName = categoryPage.getItemsList().get(itemsNom).getText();
-        categoryPage.getItemsList().get(itemsNom).click();
+    public String selectItems(int itemsNum) {
+        String itemsName = categoryPage.getItemsList().get(itemsNum).getText();
+        categoryPage.getItemsList().get(itemsNum).click();
         return itemsName;
 
     }

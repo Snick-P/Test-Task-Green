@@ -7,7 +7,6 @@ import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -18,7 +17,7 @@ import static io.qameta.allure.Allure.step;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestRunner {
-    //    TODO прокинуть email & password через файл настройки
+    //    TODO прокинуть email & password через файл, мб через csv
     private static String email = "idk@test.com";
     private static String pass = "Test@123";
 
@@ -29,7 +28,7 @@ public class TestRunner {
         browser = "chrome";
         browserSize = "1920x1080";
         headless = false;
-        holdBrowserOpen = true;
+        holdBrowserOpen = false;
     }
 
     @AfterEach
@@ -37,11 +36,26 @@ public class TestRunner {
         closeWebDriver();
     }
 
-    @Test
-    public void debug1() {
+    @DisplayName("Покупка авторизованным пользователем")
+    @Owner("snproskuryakov")
+    @ParameterizedTest
+    @CsvSource(textBlock = """
+            1 ; Blue ; L ; 1 ; 0        
+            """,
+            delimiter = ';')
+    public void authBuyer(int itemsNom, String color, String size, int quantity, int methodNum) {
+
+        String qty = String.valueOf(quantity);
+
         LoginSteps loginSteps = new LoginSteps();
         HeaderSteps headerSteps = new HeaderSteps();
         WidgetSteps widgetSteps = new WidgetSteps();
+        CategorySteps categorySteps = new CategorySteps();
+        ItemSteps itemSteps = new ItemSteps();
+        BasketSteps basketSteps = new BasketSteps();
+        ShippingSteps shippingSteps = new ShippingSteps();
+        PaymentSteps paymentSteps = new PaymentSteps();
+        SuccessSteps successSteps = new SuccessSteps();
 
         step("Открыть базовую страницу", () ->
                 open(baseUrl));
@@ -49,12 +63,31 @@ public class TestRunner {
                 headerSteps.toAuth());
         step("Войти в профиль", () ->
                 loginSteps.singIn(email, pass));
-//        TODO добавить проверку
+//        TODO добавить проверку успешной авторизации
         step("Перейти в категорию товаров", ()->
                 widgetSteps.goToMHoodies());
+        String expectName = step("Выбрать товар", () ->
+                categorySteps.selectItems(itemsNom));
+        String actualName = step("Добавить товар в корзину", () ->
+                itemSteps.addItemToCart(color, size, qty));
+        step("Проверить соответствие наименования товара", () ->
+                assertThat(actualName.equals(expectName)));
+        step("Перейти в корзину", () ->
+                headerSteps.goToBasket());
+        step("Перейти к оформлению заказа", () ->
+                basketSteps.submit());
+//    Была проблема с выполнением до загрузки страницы. Через контроль элемента не решилась, выставил sleep
+        step("Перейти к оформлению доставки", () ->
+                shippingSteps.selectMethodAndSubmit(methodNum));
+// TODO добавить проверку данных пользователя
+        step("Подтвердить оплату", () ->
+                paymentSteps.submit());
+        step("Проверить успешность оплаты", () ->
+                assertThat(successSteps.messageText().equals("Thank you for your purchase!")));
+
     }
 
-    @DisplayName("Покупка незарегистрированным пользователем")
+    @DisplayName("Покупка неавторизованным пользователем")
     @Owner("snproskuryakov")
     @ParameterizedTest
     @CsvSource(textBlock = """
@@ -63,7 +96,7 @@ public class TestRunner {
             """,
             delimiter = ';')
 
-    public void notLogInBuyer(int itemsNom, String color, String size, int quantity) {
+    public void notAuthBuyer(int itemsNum, String color, String size, int quantity) {
         String qty = String.valueOf(quantity);
 
         ItemSteps itemSteps = new ItemSteps();
@@ -80,7 +113,7 @@ public class TestRunner {
         step("Перейти в категорию товаров", () ->
                 widgetSteps.goToWJacket());
         String expectName = step("Выбрать товар", () ->
-                categorySteps.selectItems(itemsNom));
+                categorySteps.selectItems(itemsNum));
         String actualName = step("Добавить товар в корзину", () ->
                 itemSteps.addItemToCart(color, size, qty));
         step("Проверить соответствие наименования товара", () ->

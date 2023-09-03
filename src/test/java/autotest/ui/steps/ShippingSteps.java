@@ -41,4 +41,10 @@ public class ShippingSteps {
 
     }
 
+    public void selectMethodAndSubmit(int methodNum){
+        sleep(1000);
+        shippingPage.getShippingMethod().get(methodNum);
+        shippingPage.getSubmitButton().click();
+    }
+
 }
